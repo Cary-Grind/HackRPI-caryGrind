@@ -4,6 +4,7 @@
     <LogIn />
     <ContactUs />
     <MainPage />
+    <FindToilets />
   </div>
 </template>
 
@@ -12,6 +13,7 @@ import SignupForm from './components/SignupForm.vue';
 import LogIn from './components/login.vue';
 import ContactUs from './components/ContactUs.vue';
 import MainPage from './components/MainPage.vue';
+import FindToilets from './components/FindToilets.vue';
 
 export default {
   name: 'App',
@@ -20,6 +22,7 @@ export default {
     LogIn,
     ContactUs,
     MainPage,
+    FindToilets,
   },
 };
 </script>
