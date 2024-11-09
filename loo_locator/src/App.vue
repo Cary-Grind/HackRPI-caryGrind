@@ -2,18 +2,21 @@
   <div id="app">
     <SignupForm />
     <LogIn />
+    <ContactUs />
   </div>
 </template>
 
 <script>
 import SignupForm from './components/SignupForm.vue';
 import LogIn from './components/login.vue';
+import ContactUs from './components/ContactUs.vue';
 
 export default {
   name: 'App',
   components: {
     SignupForm,
     LogIn,
+    ContactUs,
   },
 };
 </script>
@@ -32,3 +35,4 @@ export default {
 </style>
 <router-link to="/signup">Signup</router-link>
 <router-link to="/login">Login</router-link>
+<router-link to="/contact">Contact Us</router-link>
