@@ -3,6 +3,7 @@
     <SignupForm />
     <LogIn />
     <ContactUs />
+    <MainPage />
   </div>
 </template>
 
@@ -10,6 +11,7 @@
 import SignupForm from './components/SignupForm.vue';
 import LogIn from './components/login.vue';
 import ContactUs from './components/ContactUs.vue';
+import MainPage from './components/MainPage.vue';
 
 export default {
   name: 'App',
@@ -17,6 +19,7 @@ export default {
     SignupForm,
     LogIn,
     ContactUs,
+    MainPage,
   },
 };
 </script>
