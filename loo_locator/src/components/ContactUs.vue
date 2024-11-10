@@ -21,7 +21,7 @@
     </div>
 </template>
 <script>
-//import axios from 'axios';
+import axios from 'axios';
 
 export default {
   name: 'ContactUs',
@@ -38,13 +38,16 @@ export default {
   },
   methods: {
     async submitForm() {
-    
-        //const response = await axios.post('http://localhost:3000/contact', this.form);
-        //console.log(response.data);
+      try {
+        const response = await axios.post('http://localhost:3000/contact', this.form);
+        console.log(response.data);
         this.successMessage = 'Email sent successfully!';
-        //this.errorMessage = '';
+        this.errorMessage = '';
         this.form = { name: '', email: '', message: '' };
-    
+      } catch (error) {
+        this.errorMessage = 'Failed to send email. Please try again.';
+        this.successMessage = '';
+      }
     },
   },
 };
