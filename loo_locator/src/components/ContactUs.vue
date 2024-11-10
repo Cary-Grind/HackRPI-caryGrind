@@ -39,13 +39,13 @@ export default {
   methods: {
     async submitForm() {
       try {
-        // Make a POST request to your backend endpoint
         const response = await axios.post('http://localhost:3000/contact', this.form);
-        this.successMessage = 'Your message has been sent successfully!';
+        console.log(response.data);
+        this.successMessage = 'Email sent successfully!';
         this.errorMessage = '';
-        console.log(response.data); // Log response from the server
+        this.form = { name: '', email: '', message: '' };
       } catch (error) {
-        this.errorMessage = error.response ? error.response.data.message : 'An error occurred';
+        this.errorMessage = 'Failed to send email. Please try again.';
         this.successMessage = '';
       }
     },
@@ -58,7 +58,9 @@ export default {
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
-  text-align: left;
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .form-group {
@@ -78,16 +80,17 @@ input, textarea {
 }
 
 button {
-  background-color: #4CAF50;
+  background-color: #007bff;
   color: white;
   border: none;
   padding: 10px 20px;
   cursor: pointer;
   font-size: 16px;
+  border-radius: 5px;
 }
 
 button:hover {
-  background-color: #45a049;
+  background-color: #0056b3;
 }
 
 .success {
@@ -100,6 +103,3 @@ button:hover {
   margin-top: 10px;
 }
 </style>
-
-
-

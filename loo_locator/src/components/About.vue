@@ -7,7 +7,7 @@
       <img src="C:\hackRPI\HackRPI-caryGrind\loo_locator\public\Group_11.png" alt="Logo" />
     </div>
     <div class="tagline">
-      <h2>If you need to poo, find the nearest loo for you!</h2>
+      <h2>Loo Location When You Are Most Vulnerable</h2>
     </div>
     <div class="vision">
       Our Vision
@@ -17,7 +17,6 @@
         Our mission is to provide the ideal public restroom service, making them
         available and accessible to all residents and visitors.
       </p>
-      <p>Find your loo, and enjoy your poo.</p>
     </div>
     <div class="stats">
       <div class="stat-box">
@@ -32,13 +31,6 @@
         <h3>Total Reviews</h3>
         <p class = "description"># of reviews</p>
       </div>
-    </div>
-    <div class="buttons">
-      <button @click="handleLogin">Login</button>
-      <button @click="handleSignUp">Sign Up</button>
-    </div>
-    <div class="contact">
-      <p>Contact us</p>
     </div>
   </div>
 </template>

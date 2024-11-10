@@ -13,6 +13,12 @@
     </div>
     <div v-if="errorMessage">{{ errorMessage }}</div>
 
+    <!-- Search filter for reviews -->
+    <div v-if="reviews.length" class="search-filter">
+      <input type="text" v-model="searchQuery" placeholder="Search comments..." @input="filterReviews" />
+      <input type="number" v-model="searchRating" placeholder="Search by rating..." @input="filterReviews" min="1" max="5" />
+    </div>
+
     <!-- Review form modal -->
     <div v-if="showReviewForm" class="review-form-modal">
       <h2>Submit a Review for {{ selectedToilet.name }}</h2>
@@ -35,10 +41,10 @@
     </div>
 
     <!-- Display reviews for the selected toilet -->
-    <div v-if="selectedToiletForReviews && reviews.length" class="reviews-section">
+    <div v-if="selectedToiletForReviews && filteredReviews.length" class="reviews-section">
       <h2>Reviews for {{ selectedToiletForReviews.name }} at {{ selectedToiletForReviews.address }}</h2>
       <ul>
-        <li v-for="(review, index) in reviews" :key="index">
+        <li v-for="(review, index) in filteredReviews" :key="index">
           <strong>{{ review.username }}</strong> ({{ review.rating }}): {{ review.comment }}
         </li>
       </ul>
@@ -57,6 +63,9 @@ export default {
       toilets: [],
       selectedToilet: null,
       reviews: [],
+      filteredReviews: [],
+      searchQuery: '',
+      searchRating: '',
       errorMessage: '',
       googleLoaded: false,
       showReviewForm: false,
@@ -200,11 +209,20 @@ export default {
           params: { name: toilet.name, address: toilet.address },
         });
         this.reviews = response.data;
+        this.filteredReviews = this.reviews;
         this.selectedToiletForReviews = toilet;
       } catch (error) {
         console.error('Error fetching reviews:', error);
         alert('Failed to fetch reviews. Please try again.');
       }
+    },
+    filterReviews() {
+      const query = this.searchQuery.toLowerCase();
+      const rating = this.searchRating;
+      this.filteredReviews = this.reviews.filter(review =>
+        review.comment.toLowerCase().includes(query) &&
+        (rating === '' || review.rating == rating)
+      );
     },
     handleToiletChange() {
       if (this.selectedToilet) {
@@ -284,6 +302,22 @@ export default {
 
 .view-reviews-button:hover {
   background-color: #0056b3;
+}
+
+.search-filter {
+  margin-top: 20px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.search-filter input {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #007bff;
+  border-radius: 5px;
+  font-size: 1em;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
 }
 
 .review-form-modal {
