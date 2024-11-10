@@ -6,12 +6,18 @@ const connection = require('../private/db');
 const mainrouter = require('./routing/mainroute');
 const path = require('path');
 const fs = require('fs');
+const https = require('https');
 
 dotenv.config({
     path: '../private/.env'
 });
 
 const io = express();
+const options = {
+    key: fs.readFileSync(path.join(__dirname, '../private/server.key')),
+    cert: fs.readFileSync(path.join(__dirname, '../private/server.crt'))
+};
+
 
 //middlewares
 io.use(morgan("dev"));
@@ -26,7 +32,7 @@ const IP = process.env.IP;
 
 //setup
 
-io.listen(PORT, IP ,() => {
+https.createServer(options, io).listen(PORT, IP ,() => {
     console.log(`server on port ${PORT} on ip ${IP}`.bgBlack.green);
 });
 
