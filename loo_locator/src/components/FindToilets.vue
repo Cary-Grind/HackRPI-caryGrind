@@ -124,9 +124,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.toilet-locator {
-  /* Your styles */
-}
-</style>

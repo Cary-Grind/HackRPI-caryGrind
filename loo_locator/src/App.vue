@@ -6,7 +6,6 @@
     <MainPage />
     <FindToilets />
     <AboutUs />
-    <ToiletForum />
     <ToiletReview />
   </div>
 </template>
@@ -18,7 +17,6 @@ import ContactUs from './components/ContactUs.vue';
 import MainPage from './components/MainPage.vue';
 import FindToilets from './components/FindToilets.vue';
 import AboutUs from './components/About.vue';
-import ToiletForum from './components/ToiletForum.vue';
 import ToiletReview from './components/ToiletReview.vue';
 
 export default {
@@ -30,7 +28,6 @@ export default {
     MainPage,
     FindToilets,
     AboutUs,
-    ToiletForum,
     ToiletReview,
   },
 };
