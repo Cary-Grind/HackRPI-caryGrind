@@ -38,10 +38,15 @@
       async submitForm() {
         try {
           const response = await axios.post('http://localhost:3000/signup', this.form);
+          if (response.success) {
+            alert('Signup successful!'); // You can customize this as needed
+          } else {
+            this.errorMessage = response.message;
+          }
           console.log(response.data);
           alert('Signup successful!'); // You can customize this as needed
         } catch (error) {
-          this.errorMessage = error.response ? error.response.data.message : 'An error occurred';
+          this.errorMessage = error.response ? error.response.data.message : 'Enter better data';
         }
       },
     },
