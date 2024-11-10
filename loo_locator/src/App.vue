@@ -4,7 +4,6 @@
     <LogIn />
     <ContactUs />
     <MainPage />
-    <FindToilets />
     <AboutUs />
     <ToiletReview />
   </div>
@@ -15,7 +14,6 @@ import SignupForm from './components/SignupForm.vue';
 import LogIn from './components/login.vue';
 import ContactUs from './components/ContactUs.vue';
 import MainPage from './components/MainPage.vue';
-import FindToilets from './components/FindToilets.vue';
 import AboutUs from './components/About.vue';
 import ToiletReview from './components/ToiletReview.vue';
 
@@ -26,7 +24,6 @@ export default {
     LogIn,
     ContactUs,
     MainPage,
-    FindToilets,
     AboutUs,
     ToiletReview,
   },

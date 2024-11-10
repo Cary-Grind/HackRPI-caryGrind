@@ -1,35 +1,15 @@
 <template>
-  <div class="toilet-locator">
+  <div class="toilet-review">
     <h1>Nearby Toilets</h1>
-    <GMapMap
-      v-if="googleLoaded"
-      :center="center"
-      :zoom="14"
-      style="width: 100%; height: 500px;"
-    >
-      <!-- Marker for the user's location -->
-      <GMapMarker :position="center" label="You are here" />
-
-      <!-- Markers for the nearby toilets -->
-      <GMapMarker
-        v-for="(toilet, index) in toilets"
-        :key="index"
-        :position="toilet.location"
-        :title="toilet.name"
-        @click="handleMarkerClick(toilet)"
-      />
-    </GMapMap>
-    <div v-if="toilets.length">
+    <div id="map" class="map-container"></div>
+    <div v-if="toilets.length" class="toilets-dropdown">
       <h2>Toilets Found:</h2>
-      <ul class="toilet-list">
-        <li v-for="(toilet, index) in toilets" :key="index" class="toilet-item">
-          <div class="toilet-info">
-            <span class="toilet-name">{{ toilet.name }}</span>
-            <span class="toilet-address">{{ toilet.address }}</span>
-          </div>
-          <button @click="viewReviews(toilet)" class="view-reviews-button">View Reviews</button>
-        </li>
-      </ul>
+      <select v-model="selectedToilet" @change="handleToiletChange">
+        <option v-for="(toilet, index) in toilets" :key="index" :value="toilet">
+          {{ toilet.name }} - {{ toilet.address }}
+        </option>
+      </select>
+      <button @click="viewReviews(selectedToilet)" class="view-reviews-button">View Reviews</button>
     </div>
     <div v-if="errorMessage">{{ errorMessage }}</div>
 
@@ -55,7 +35,7 @@
     </div>
 
     <!-- Display reviews for the selected toilet -->
-    <div v-if="selectedToiletForReviews && reviews.length">
+    <div v-if="selectedToiletForReviews && reviews.length" class="reviews-section">
       <h2>Reviews for {{ selectedToiletForReviews.name }} at {{ selectedToiletForReviews.address }}</h2>
       <ul>
         <li v-for="(review, index) in reviews" :key="index">
@@ -73,12 +53,13 @@ export default {
   data() {
     return {
       center: { lat: 0, lng: 0 },
+      map: null,
       toilets: [],
+      selectedToilet: null,
       reviews: [],
       errorMessage: '',
       googleLoaded: false,
       showReviewForm: false,
-      selectedToilet: null,
       selectedToiletForReviews: null,
       newReview: {
         username: '',
@@ -111,7 +92,7 @@ export default {
       if (typeof window.google !== 'undefined') {
         console.log('Google Maps API is already loaded.');
         this.googleLoaded = true;
-        this.findNearbyToilets();
+        this.initMap();
       } else {
         const script = document.createElement('script');
         const key = process.env.VUE_APP_GOOGLE_MAPS_API_KEY;
@@ -121,7 +102,7 @@ export default {
         script.onload = () => {
           console.log('Google Maps API script loaded.');
           this.googleLoaded = true;
-          this.findNearbyToilets();
+          this.initMap();
         };
         script.onerror = () => {
           this.errorMessage = 'Failed to load Google Maps API.';
@@ -129,6 +110,20 @@ export default {
         };
         document.head.appendChild(script);
       }
+    },
+    initMap() {
+      this.map = new window.google.maps.Map(document.getElementById('map'), {
+        center: this.center,
+        zoom: 14,
+      });
+
+      new window.google.maps.Marker({
+        position: this.center,
+        map: this.map,
+        label: 'You are here',
+      });
+
+      this.findNearbyToilets();
     },
     findNearbyToilets() {
       if (typeof window.google === 'undefined') {
@@ -143,7 +138,7 @@ export default {
         type: ['toilet'], // Type of place to search for
       };
 
-      const service = new window.google.maps.places.PlacesService(document.createElement('div'));
+      const service = new window.google.maps.places.PlacesService(this.map);
 
       // Perform a nearby search
       service.nearbySearch(request, (results, status) => {
@@ -157,6 +152,17 @@ export default {
                 lng: place.geometry.location.lng(),
               },
             };
+
+            // Add marker for each toilet
+            const marker = new window.google.maps.Marker({
+              position: toilet.location,
+              map: this.map,
+              title: toilet.name,
+            });
+
+            marker.addListener('click', () => {
+              this.handleMarkerClick(toilet);
+            });
 
             return toilet;
           });
@@ -200,6 +206,12 @@ export default {
         alert('Failed to fetch reviews. Please try again.');
       }
     },
+    handleToiletChange() {
+      if (this.selectedToilet) {
+        console.log(`Selected toilet: ${this.selectedToilet.name} - ${this.selectedToilet.address}`);
+        // You can add additional logic here to handle the selected toilet
+      }
+    },
     closeReviewForm() {
       this.showReviewForm = false;
     },
@@ -208,43 +220,66 @@ export default {
 </script>
 
 <style scoped>
-.toilet-locator {
-  /* Your styles */
-}
-
-.toilet-list {
-  list-style-type: none;
-  padding: 0;
-}
-
-.toilet-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  border-bottom: 1px solid #ccc;
-}
-
-.toilet-info {
+.toilet-review {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+  height: 100vh;
+  box-sizing: border-box;
 }
 
-.toilet-name {
-  font-weight: bold;
+.header {
+  margin-bottom: 20px;
 }
 
-.toilet-address {
-  color: #666;
+.header h1 {
+  font-size: 2.5em;
+  color: #333;
+  text-align: center;
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+}
+
+.map-container {
+  flex: 1;
+  width: 100%;
+  max-width: 1200px;
+  border: 2px solid #007bff;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  height: 500px;
+}
+
+.toilets-dropdown {
+  margin-top: 20px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.toilets-dropdown select {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #007bff;
+  border-radius: 5px;
+  background-color: white;
+  font-size: 1em;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .view-reviews-button {
   background-color: #007bff;
   color: white;
   border: none;
-  padding: 5px 10px;
+  padding: 10px 20px;
   cursor: pointer;
   border-radius: 5px;
+  margin-top: 10px;
 }
 
 .view-reviews-button:hover {
@@ -278,5 +313,33 @@ export default {
 
 .review-form-modal form button {
   margin-top: 10px;
+}
+
+.reviews-section {
+  margin-top: 20px;
+  width: 100%;
+  max-width: 800px;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.reviews-section h2 {
+  margin-top: 0;
+}
+
+.reviews-section ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.reviews-section li {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.reviews-section li:last-child {
+  border-bottom: none;
 }
 </style>

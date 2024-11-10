@@ -1,43 +1,43 @@
 <template>
-  <div class="toilet-locator">
-    <h1>Nearby Toilets</h1>
-    <GMapMap
-      v-if="googleLoaded"
-      :center="center"
-      :zoom="14"
-      style="width: 100%; height: 500px;"
-    >
-      <!-- Marker for the user's location -->
-      <GMapMarker :position="center" label="You are here" />
-
-      <!-- Markers for the nearby toilets -->
-      <GMapMarker
-        v-for="(toilet, index) in toilets"
-        :key="index"
-        :position="toilet.location"
-        :title="toilet.name"
-      />
-    </GMapMap>
-    <div v-if="toilets.length">
+  <div class="find-toilets">
+    <div class="header">
+      <h1>Find Nearby Toilets</h1>
+    </div>
+    <div class="map-container">
+      <GMapMap
+        v-if="googleLoaded"
+        :center="center"
+        :zoom="14"
+        style="width: 100%; height: 500px;"
+      >
+        <GMapMarker :position="center" label="You are here" />
+        <GMapMarker
+          v-for="(toilet, index) in toilets"
+          :key="index"
+          :position="toilet.location"
+          :title="toilet.name"
+        />
+      </GMapMap>
+    </div>
+    <div v-if="toilets.length" class="toilets-dropdown">
       <h2>Toilets Found:</h2>
-      <ul>
-        <li v-for="(toilet, index) in toilets" :key="index">
+      <select v-model="selectedToilet" @change="handleToiletChange">
+        <option v-for="(toilet, index) in toilets" :key="index" :value="toilet">
           {{ toilet.name }} - {{ toilet.address }}
-        </li>
-      </ul>
+        </option>
+      </select>
     </div>
     <div v-if="errorMessage">{{ errorMessage }}</div>
   </div>
 </template>
 
 <script>
-
-
 export default {
   data() {
     return {
       center: { lat: 0, lng: 0 },
       toilets: [],
+      selectedToilet: null,
       errorMessage: '',
       googleLoaded: false,
     };
@@ -113,7 +113,6 @@ export default {
               },
             };
 
-
             return toilet;
           });
         } else {
@@ -121,6 +120,70 @@ export default {
         }
       });
     },
+    handleToiletChange() {
+      if (this.selectedToilet) {
+        console.log(`Selected toilet: ${this.selectedToilet.name} - ${this.selectedToilet.address}`);
+        // You can add additional logic here to handle the selected toilet
+      }
+    },
   },
 };
 </script>
+
+<style scoped>
+.find-toilets {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.header {
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  font-size: 2.5em;
+  color: #333;
+  text-align: center;
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+}
+
+.map-container {
+  flex: 1;
+  width: 100%;
+  max-width: 1200px;
+  border: 2px solid #007bff;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.map-container > div {
+  width: 100%;
+  height: 100%;
+}
+
+.toilets-dropdown {
+  margin-top: 20px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.toilets-dropdown select {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #007bff;
+  border-radius: 5px;
+  background-color: white;
+  font-size: 1em;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+</style>
