@@ -1,54 +1,64 @@
 <template>
-  <div class="toilet-review">
-    <h1>Nearby Toilets</h1>
-    <div id="map" class="map-container"></div>
-    <div v-if="toilets.length" class="toilets-dropdown">
-      <h2>Toilets Found:</h2>
-      <select v-model="selectedToilet" @change="handleToiletChange">
-        <option v-for="(toilet, index) in toilets" :key="index" :value="toilet">
-          {{ toilet.name }} - {{ toilet.address }}
-        </option>
-      </select>
-      <button @click="viewReviews(selectedToilet)" class="view-reviews-button">View Reviews</button>
-    </div>
-    <div v-if="errorMessage">{{ errorMessage }}</div>
+  <div class="container">
+    <div class="toilet-review">
+      <h1>Nearby Toilets</h1>
+      <div id="map" class="map-container"></div>
+      <div v-if="toilets.length" class="toilets-dropdown">
+        <h2>Toilets Found:</h2>
+        <select v-model="selectedToilet" @change="handleToiletChange">
+          <option v-for="(toilet, index) in toilets" :key="index" :value="toilet">
+            {{ toilet.name }} - {{ toilet.address }}
+          </option>
+        </select>
+        <button @click="viewReviews(selectedToilet)" class="view-reviews-button">View Reviews</button>
+      </div>
+      <div v-if="errorMessage">{{ errorMessage }}</div>
 
-    <!-- Search filter for reviews -->
-    <div v-if="reviews.length" class="search-filter">
-      <input type="text" v-model="searchQuery" placeholder="Search comments..." @input="filterReviews" />
-      <input type="number" v-model="searchRating" placeholder="Search by rating..." @input="filterReviews" min="1" max="5" />
+      <!-- Search filter for reviews -->
+      <div v-if="reviews.length" class="search-filter">
+        <input type="text" v-model="searchQuery" placeholder="Search comments..." @input="filterReviews" />
+        <input type="number" v-model="searchRating" placeholder="Search by rating..." @input="filterReviews" min="1" max="5" />
+      </div>
+
+      <!-- Review form modal -->
+      <div v-if="showReviewForm" class="modal">
+        <div class="modal-content">
+          <span class="close" @click="closeReviewForm">&times;</span>
+          <h2>Submit a Review for {{ selectedToilet.name }}</h2>
+          <form @submit.prevent="submitReview">
+            <div class="form-group">
+              <label for="username">Username:</label>
+              <input type="text" v-model="newReview.username" id="username" placeholder="Enter your username" required />
+            </div>
+            <div class="form-group">
+              <label for="rating">Rating:</label>
+              <select v-model="newReview.rating" id="rating" required>
+                <option disabled value="">Select a rating</option>
+                <option v-for="n in 5" :key="n" :value="n">{{ n }} Star{{ n > 1 ? 's' : '' }}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="comment">Comment:</label>
+              <textarea v-model="newReview.comment" id="comment" placeholder="Enter your comment" required></textarea>
+            </div>
+            <button type="submit" class="btn">Submit Review</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Display reviews for the selected toilet -->
+      <div v-if="selectedToiletForReviews && filteredReviews.length" class="reviews-section">
+        <h2>Reviews for {{ selectedToiletForReviews.name }} at {{ selectedToiletForReviews.address }}</h2>
+        <ul>
+          <li v-for="(review, index) in filteredReviews" :key="index">
+            <strong>{{ review.username }}</strong> ({{ review.rating }}): {{ review.comment }}
+          </li>
+        </ul>
+      </div>
     </div>
 
-    <!-- Review form modal -->
-    <div v-if="showReviewForm" class="review-form-modal">
-      <h2>Submit a Review for {{ selectedToilet.name }}</h2>
-      <form @submit.prevent="submitReview">
-        <div>
-          <label for="username">Username:</label>
-          <input type="text" id="username" v-model="newReview.username" required />
-        </div>
-        <div>
-          <label for="rating">Rating:</label>
-          <input type="number" id="rating" v-model="newReview.rating" required min="1" max="5" />
-        </div>
-        <div>
-          <label for="comment">Comment:</label>
-          <textarea id="comment" v-model="newReview.comment" required></textarea>
-        </div>
-        <button type="submit">Submit Review</button>
-        <button type="button" @click="closeReviewForm">Cancel</button>
-      </form>
-    </div>
-
-    <!-- Display reviews for the selected toilet -->
-    <div v-if="selectedToiletForReviews && filteredReviews.length" class="reviews-section">
-      <h2>Reviews for {{ selectedToiletForReviews.name }} at {{ selectedToiletForReviews.address }}</h2>
-      <ul>
-        <li v-for="(review, index) in filteredReviews" :key="index">
-          <strong>{{ review.username }}</strong> ({{ review.rating }}): {{ review.comment }}
-        </li>
-      </ul>
-    </div>
+    <!-- Error Message -->
+    <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
   </div>
 </template>
 
@@ -56,6 +66,7 @@
 import axios from 'axios';
 
 export default {
+  name: 'ToiletReview',
   data() {
     return {
       center: { lat: 0, lng: 0 },
@@ -208,6 +219,7 @@ export default {
         const response = await axios.get('http://localhost:3000/reviews', {
           params: { name: toilet.name, address: toilet.address },
         });
+        
         this.reviews = response.data;
         this.filteredReviews = this.reviews;
         this.selectedToiletForReviews = toilet;
@@ -320,6 +332,72 @@ export default {
   margin-bottom: 10px;
 }
 
+.modal {
+  display: block;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  border-radius: 10px;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+button.btn {
+  padding: 10px 20px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button.btn:hover {
+  background: #0056b3;
+}
+
 .review-form-modal {
   position: fixed;
   top: 50%;
@@ -375,5 +453,11 @@ export default {
 
 .reviews-section li:last-child {
   border-bottom: none;
+}
+
+/* Error message styling */
+.error {
+  color: red;
+  margin-top: 10px;
 }
 </style>
