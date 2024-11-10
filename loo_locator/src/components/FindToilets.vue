@@ -31,6 +31,8 @@
 </template>
 
 <script>
+
+
 export default {
   data() {
     return {
@@ -101,14 +103,19 @@ export default {
       // Perform a nearby search
       service.nearbySearch(request, (results, status) => {
         if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-          this.toilets = results.map((place) => ({
-            name: place.name,
-            address: place.vicinity,
-            location: {
-              lat: place.geometry.location.lat(),
-              lng: place.geometry.location.lng(),
-            },
-          }));
+          this.toilets = results.map((place) => {
+            const toilet = {
+              name: place.name,
+              address: place.vicinity,
+              location: {
+                lat: place.geometry.location.lat(),
+                lng: place.geometry.location.lng(),
+              },
+            };
+
+
+            return toilet;
+          });
         } else {
           this.errorMessage = 'No toilets found nearby.';
         }
