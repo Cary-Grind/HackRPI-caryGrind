@@ -28,6 +28,28 @@
         </ul>
       </div>
       <div v-if="errorMessage">{{ errorMessage }}</div>
+
+      <!-- Review form modal -->
+      <div v-if="showReviewForm" class="review-form-modal">
+        <h2>Submit a Review for {{ selectedToilet.name }}</h2>
+        <form @submit.prevent="submitReview">
+          <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" v-model="newReview.username" required />
+          </div>
+          <div>
+            <label for="rating">Rating:</label>
+            <input type="number" id="rating" v-model="newReview.rating" required min="1" max="5" />
+          </div>
+          <div>
+            <label for="comment">Comment:</label>
+            <textarea id="comment" v-model="newReview.comment" required></textarea>
+          </div>
+          <button type="submit">Submit Review</button>
+          <button type="button" @click="closeReviewForm">Cancel</button>
+          <button type="button" @click="fetchReviews(selectedToilet.name, selectedToilet.address)">View Reviews</button>
+        </form>
+      </div>
     </div>
   </template>
   
@@ -42,6 +64,13 @@
         toilets: [],
         errorMessage: '',
         googleLoaded: false,
+        showReviewForm: false,
+        selectedToilet: null,
+        newReview: {
+          username: '',
+          rating: '',
+          comment: '',
+        },
       };
     },
     mounted() {
@@ -123,13 +152,42 @@
           }
         });
       },
-      async handleMarkerClick(toilet) {
-        const request = axios.post('http://localhost:3000/reviews', {
-            name: toilet.name,
-            address: toilet.address,
-        });
-        console.log(request);
-        console.log("Pin Clicked")
+      handleMarkerClick(toilet) {
+        this.selectedToilet = toilet;
+        this.showReviewForm = true;
+      },
+      async submitReview() {
+        try {
+          // Submit the new review to the backend
+          const response = await axios.post('http://localhost:3000/reviews', {
+            ...this.newReview,
+            name: this.selectedToilet.name,
+            address: this.selectedToilet.address,
+          });
+          console.log('Review submitted:', response.data);
+          // Reset the form and close the modal
+          this.newReview = { username: '', rating: '', comment: '' };
+          this.showReviewForm = false;
+          alert('Review submitted successfully!');
+        } catch (error) {
+          console.error('Error submitting review:', error);
+          alert('Failed to submit review. Please try again.');
+        }
+      },
+      async fetchReviews(name, address) {
+        try {
+          const response = await axios.get('http://localhost:3000/reviews', {
+            params: { name, address },
+          });
+          this.reviews = response.data;
+          
+        } catch (error) {
+          console.error('Error fetching reviews:', error);
+          alert('Failed to fetch reviews. Please try again.');
+        }
+      },
+      closeReviewForm() {
+        this.showReviewForm = false;
       },
     },
   };
@@ -138,5 +196,34 @@
   <style scoped>
   .toilet-locator {
     /* Your styles */
+  }
+
+  .review-form-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+  
+  .review-form-modal h2 {
+    margin-top: 0;
+  }
+  
+  .review-form-modal form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .review-form-modal form div {
+    margin-bottom: 10px;
+  }
+  
+  .review-form-modal form button {
+    margin-top: 10px;
   }
   </style>
