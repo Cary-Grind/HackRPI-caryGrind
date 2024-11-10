@@ -6,6 +6,7 @@
     <MainPage />
     <FindToilets />
     <AboutUs />
+    <ToiletForum />
   </div>
 </template>
 
@@ -16,6 +17,7 @@ import ContactUs from './components/ContactUs.vue';
 import MainPage from './components/MainPage.vue';
 import FindToilets from './components/FindToilets.vue';
 import AboutUs from './components/About.vue';
+import ToiletForum from './components/ToiletForum.vue';
 
 export default {
   name: 'App',
@@ -26,6 +28,7 @@ export default {
     MainPage,
     FindToilets,
     AboutUs,
+    ToiletForum,
   },
 };
 </script>
