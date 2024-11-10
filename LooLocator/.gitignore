@@ -34,3 +34,5 @@ node_modules/
 private/.env
 .editorconfig
 eslint.config.js
+package-lock.json
+package.json

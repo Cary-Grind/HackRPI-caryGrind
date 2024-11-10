@@ -10,12 +10,15 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@fawmi/vue-google-maps": "^0.9.79",
     "axios": "^1.7.7",
     "colors": "^1.4.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "morgan": "^1.10.0",
     "mysql2": "^3.11.4",
+    "nodemailer": "^6.9.16",
     "vue": "^3.5.12",
     "vue-router": "^4.4.5"
   },

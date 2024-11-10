@@ -37,7 +37,7 @@ export default {
   methods: {
     async submitForm() {
       try {
-        const response = await axios.post('http://localhost:8080/signup', this.form);
+        const response = await axios.post('http://129.161.129.60:8080/signup', this.form);
         // console.log(response.data);
         alert('Signup successful!'); // You can customize this as needed
       } catch (error) {
