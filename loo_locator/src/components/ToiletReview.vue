@@ -129,7 +129,7 @@
             address: toilet.address,
         });
         console.log(request);
-        console.log("CLICKED")
+        console.log("Pin Clicked")
       },
     },
   };
