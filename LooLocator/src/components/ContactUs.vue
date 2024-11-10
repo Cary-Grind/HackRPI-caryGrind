@@ -40,7 +40,7 @@ export default {
     async submitForm() {
       try {
         // Make a POST request to your backend endpoint
-        const response = await axios.post('http://129.161.129.60:8080/contact', this.form);
+        const response = await axios.post('https://129.161.129.165:8080/contact', this.form);
         this.successMessage = 'Your message has been sent successfully!';
         this.errorMessage = '';
         console.log(response.data); // Log response from the server

@@ -15,7 +15,7 @@ dotenv.config({
 const io = express();
 const options = {
     key: fs.readFileSync(path.join(__dirname, '../private/server.key')),
-    cert: fs.readFileSync(path.join(__dirname, '../private/server.crt'))
+    cert: fs.readFileSync(path.join(__dirname, '../private/server.crt'))     //ssl encryption
 };
 
 

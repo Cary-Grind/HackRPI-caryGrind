@@ -36,3 +36,9 @@ private/.env
 eslint.config.js
 package-lock.json
 package.json
+
+# openssl certificates and keys
+
+private/server.crt
+private/server.csr
+private/server.key
